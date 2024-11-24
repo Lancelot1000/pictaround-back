@@ -39,3 +39,6 @@ application.properties
 
 ## TEST ##
 /src/test/java/project/pictaround/service
+
+## MAC ##
+.DS_Store

@@ -2,6 +2,7 @@ package project.pictaround.service;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import project.pictaround.domain.Member;
@@ -11,6 +12,7 @@ import project.pictaround.exception.UnauthorizedException;
 import project.pictaround.exception.UserAlreadyExistsException;
 import project.pictaround.repository.MemberRepository;
 
+@Slf4j
 @Service
 @Transactional(readOnly = true)
 public class LoginService {
@@ -42,12 +44,12 @@ public class LoginService {
 
     @Transactional
     public void createMember(JoinRequestDto joinRequestDto) {
-        Member member = JoinRequestDto.toEntity(joinRequestDto);
-        boolean isExists = isExistsByName(member.getLoginId());
+        boolean isExists = isExistsByName(joinRequestDto.getId());
 
         if (isExists) {
             throw new UserAlreadyExistsException("DUPLICATED");
         } else {
+            log.info(joinRequestDto.toString());
             memberRepository.save(JoinRequestDto.toEntity(joinRequestDto));
         }
     }

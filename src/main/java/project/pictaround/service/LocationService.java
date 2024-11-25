@@ -16,6 +16,7 @@ import project.pictaround.dto.request.CreateReviewRequestDto;
 import project.pictaround.dto.request.FindLocationsRequestDto;
 import project.pictaround.dto.request.PageRequestDto;
 import project.pictaround.dto.response.*;
+import project.pictaround.exception.NotFoundException;
 import project.pictaround.exception.UnauthorizedException;
 import project.pictaround.repository.CategoryRepository;
 import project.pictaround.repository.LocationRepository;
@@ -92,6 +93,10 @@ public class LocationService {
     public List<KeywordResponseDto> findSearchKeyword(String query) {
         List<KeywordResponseDto> keywords = new ArrayList<>();
 
+        if (query == null || query.isEmpty()) {
+            return keywords;
+        }
+
         WebClient webClient = WebClient.builder()
                 .baseUrl(searchProperties.getHost()) // 기본 URL 설정
                 .defaultHeader("X-Naver-Client-Id", searchProperties.getId()) // 헤더 설정
@@ -143,6 +148,10 @@ public class LocationService {
 
     public SingleLocationDto findLocation(Long locationId) {
         Location location = locationRepository.findByLocationId(locationId);
+
+        if (location == null) {
+            throw new NotFoundException("NOT_FOUND_LOCATION");
+        }
 
         return SingleLocationDto.builder()
                 .id(location.getId())

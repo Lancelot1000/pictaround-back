@@ -1,9 +1,6 @@
 package project.pictaround.repository;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.Tuple;
-import jakarta.persistence.TypedQuery;
+import jakarta.persistence.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,9 +41,11 @@ public class LocationRepository {
     public Location findByLocationId(Long locationId) {
         String jpql = "select l from Location l where l.id = :locationId";
 
-        return em.createQuery(jpql, Location.class)
+        List<Location> locations = em.createQuery(jpql, Location.class)
                 .setParameter("locationId", locationId)
-                .getSingleResult();
+                .getResultList();
+
+        return locations.isEmpty() ? null : locations.get(0);
     }
 
     public List<Location> findByRange(FindLocationsRequestDto requestDto) {

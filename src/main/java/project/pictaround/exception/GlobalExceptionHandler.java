@@ -25,7 +25,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<CustomErrorResponse> handleNotFoundException(UnexpectedException ex) {
+    public ResponseEntity<CustomErrorResponse> handleNotFoundException(NotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new CustomErrorResponse(ex.getMessage()));
     }
 }

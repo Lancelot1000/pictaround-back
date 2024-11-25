@@ -35,7 +35,7 @@ public class LocationController {
     }
 
     @GetMapping("/keyword")
-    public ResponseEntity<List<KeywordResponseDto>> findSearchKeyword(@RequestParam String query) {
+    public ResponseEntity<List<KeywordResponseDto>> findSearchKeyword(@RequestParam(required = false) String query) {
         List<KeywordResponseDto> searchKeywords = locationService.findSearchKeyword(query);
 
         return ResponseEntity.status(HttpStatus.OK).body(searchKeywords);

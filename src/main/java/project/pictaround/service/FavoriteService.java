@@ -41,11 +41,12 @@ public class FavoriteService {
     @Transactional
     public void setFavorite(Long reviewId, HttpServletRequest request, HttpServletResponse response) {
         Member member = sessionService.findMember(request, response, false);
-        Review review = reviewRepository.findById(reviewId);
 
         if (member == null) {
             throw new UnauthorizedException("로그인이 필요합니다.");
         }
+
+        Review review = reviewRepository.findById(reviewId);
 
         if (review == null) {
             throw new NotFoundException("NOT_FOUND_REVIEW");

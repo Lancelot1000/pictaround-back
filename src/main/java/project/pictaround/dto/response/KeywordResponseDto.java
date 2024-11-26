@@ -8,8 +8,8 @@ import lombok.Getter;
 public class KeywordResponseDto {
     private String title;
     private String address;
-    private float latitude;
-    private float longitude;
+    private double latitude;
+    private double longitude;
 
     @Override
     public String toString() {

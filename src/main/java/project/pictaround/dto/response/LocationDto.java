@@ -12,8 +12,8 @@ public class LocationDto {
     private Long id;
     private Long categoryId;
     private String name;
-    private float latitude;
-    private float longitude;
+    private double latitude;
+    private double longitude;
     private String imageLocation;
 
     @Override

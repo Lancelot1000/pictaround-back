@@ -21,9 +21,9 @@ public class Location {
     @Column(name = "location_id")
     private Long id;
 
-    private float latitude;
+    private double latitude;
 
-    private float longitude;
+    private double longitude;
 
     private String name;
 
@@ -38,7 +38,7 @@ public class Location {
     private Category category;
 
     @Builder
-    public Location(float latitude, float longitude, String name, String address, Category category) {
+    public Location(double latitude, double longitude, String name, String address, Category category) {
         this.latitude = latitude;
         this.longitude = longitude;
         this.name = name;

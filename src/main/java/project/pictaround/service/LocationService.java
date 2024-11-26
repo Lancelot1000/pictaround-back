@@ -64,6 +64,7 @@ public class LocationService {
         if (location != null && member == null) {
             throw new UnauthorizedException("로그인이 필요합니다.");
         }
+
         // 장소가 없으면 새로 생성
         if (location == null) {
             needCreateLocation = true;
@@ -113,14 +114,14 @@ public class LocationService {
                 .retrieve() // 응답 처리 시작
                 .bodyToMono(KeywordListDto.class) // 응답을 String으로 변환
                 .map(res -> res.getItems())
-                .block(); // 비동기 호출 완료를 기다림 (이 부분에서 응답 대기)
+                .block(); // 비동기 호출 완료를 기다림 (이 부분에서 응답 대기)\\
 
         for (KeywordItemDto item : items) {
             KeywordResponseDto keywordItem = KeywordResponseDto.builder()
                     .title(item.getTitle().replaceAll("<[^>]*>", ""))
                     .address(item.getRoadAddress())
-                    .latitude(convertMapX(item.getMapx()))
-                    .longitude(convertMapY(item.getMapy()))
+                    .longitude(convertMapX(item.getMapx()))
+                    .latitude(convertMapY(item.getMapy()))
                     .build();
 
             keywords.add(keywordItem);
@@ -173,13 +174,13 @@ public class LocationService {
         return new ReviewListDto(pageDto.getOffset(), pageDto.getLimit(), total, allByLocationId);
     }
 
-    private static float convertMapX(String mapX) {
-        float x = Float.parseFloat(mapX);
-        return x / 10000000.0f;
+    private static double convertMapX(String mapX) {
+        double x = Double.parseDouble(mapX);
+        return x / 10000000.0;
     }
 
-    private static float convertMapY(String mapY) {
-        float y = Float.parseFloat(mapY);
-        return y / 10000000.0f;
+    private static double convertMapY(String mapY) {
+        double y = Double.parseDouble(mapY);
+        return y / 10000000.0;
     }
 }

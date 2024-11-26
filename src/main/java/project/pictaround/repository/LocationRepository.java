@@ -94,10 +94,10 @@ public class LocationRepository {
         List<Long> locationIds = locations.stream().map(Location::getId).toList();
 
         String nativeQuery = "SELECT sub.location_id as location_id, sub.category_id as categoryId, sub.name as name, sub.latitude as latitude, sub.longitude as longitude, r.image_location as imageLocation " +
-                "FROM Review r " +
+                "FROM review r " +
                 "INNER JOIN (" +
                 "SELECT * " +
-                "FROM Location l " +
+                "FROM location l " +
                 "WHERE l.location_id in (:locationIds) " +
                 ") sub " +
                 "ON sub.best_review_id = r.review_id " +

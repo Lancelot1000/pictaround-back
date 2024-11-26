@@ -7,7 +7,7 @@
 - Test pw: password
 - 코드
   - 백엔드: https://github.com/Lancelot1000/pictaround-back
-  - 프론트: https://github.com/Lancelot1000/pictaround-front
+  - 프론트: https://github.com/Lancelot1000/pictaround-front
    
 
 ## 프로젝트 소개

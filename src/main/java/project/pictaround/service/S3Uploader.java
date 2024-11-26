@@ -54,7 +54,7 @@ public class S3Uploader {
 
         String myURL = presignedRequest.url().toString();
 
-        myURL = myURL.replace(BUCKET_DOMAIN, "");
+//        myURL = myURL.replace(BUCKET_DOMAIN, "");
         log.info("presigned url to upload a file to : {}",myURL);
         log.info("HTTP method: {}", presignedRequest.httpRequest().method());
 

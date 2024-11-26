@@ -26,6 +26,13 @@
 - 프론트 배포: vercel
 - 백엔드 배포: AWS (EC2, RDS) 
 
+## 기능
+- 로그인
+- 회원가입
+- 장소 등록
+- 현 위치 기반 장소 찾기
+
 ## ERD
-![pictaround](https://github.com/user-attachments/assets/421606c0-f589-485d-8e9d-6e3c50c74c6c)
+![pictaround](https://github.com/user-attachments/assets/098ff7d6-4164-447d-9b42-ad8d1f781c42)
+
 

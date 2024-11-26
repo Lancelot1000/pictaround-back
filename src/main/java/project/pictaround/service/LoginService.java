@@ -61,5 +61,4 @@ public class LoginService {
     private static boolean checkPassword(Member memberInfo, Member member) {
         return memberInfo.getPassword().equals(member.getPassword());
     }
-
 }

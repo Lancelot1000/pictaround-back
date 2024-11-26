@@ -6,10 +6,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import project.pictaround.dto.response.FindMeResponseDto;
-import project.pictaround.dto.response.MyFavoriteDto;
-import project.pictaround.dto.response.SuccessResponse;
 import project.pictaround.service.MemberService;
 
 @Slf4j
@@ -23,8 +22,8 @@ public class MemberController {
     }
 
     @GetMapping("/user/me")
-    public ResponseEntity<FindMeResponseDto> findMe(HttpServletRequest request, HttpServletResponse response) {
-        FindMeResponseDto me = memberService.findMe(request, response);
+    public ResponseEntity<FindMeResponseDto> findMe(HttpServletRequest request, HttpServletResponse response, @RequestParam(required = false, defaultValue = "false") String refresh) {
+        FindMeResponseDto me = memberService.findMe(request, response, refresh.equals("true"));
 
         return ResponseEntity.status(HttpStatus.OK).body(me);
     }

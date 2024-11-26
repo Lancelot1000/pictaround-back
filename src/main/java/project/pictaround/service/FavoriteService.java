@@ -25,7 +25,7 @@ public class FavoriteService {
     private final SessionService sessionService;
     private final ReviewRepository reviewRepository;
 
-
+    @Transactional
     public MyFavoriteDto findFavorite(HttpServletRequest request, HttpServletResponse response) {
         Member member = sessionService.findMember(request, response, false);
 

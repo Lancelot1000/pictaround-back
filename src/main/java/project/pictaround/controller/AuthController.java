@@ -13,23 +13,23 @@ import project.pictaround.dto.request.LoginRequestDto;
 import project.pictaround.dto.response.SuccessResponse;
 import project.pictaround.dto.response.MessageResponse;
 import project.pictaround.service.LoginService;
+import project.pictaround.service.SessionService;
 
 @Slf4j
 @RestController
 public class AuthController {
 
     private final LoginService loginService;
+    private final SessionService sessionService;
 
-    public AuthController(LoginService loginService) {
+    public AuthController(LoginService loginService, SessionService sessionService) {
         this.loginService = loginService;
+        this.sessionService = sessionService;
     }
 
     @PostMapping("/auth/login")
     public ResponseEntity<SuccessResponse> login(@RequestBody LoginRequestDto loginRequestDto, HttpServletRequest request, HttpServletResponse response) {
         loginService.loginMember(loginRequestDto, response);
-
-        HttpSession session = request.getSession();
-        session.setAttribute(SessionConst.SESSION_USER, loginRequestDto);
 
         return ResponseEntity.status(HttpStatus.OK).body(new SuccessResponse(true));
     }
@@ -51,5 +51,12 @@ public class AuthController {
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse(true));
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<SuccessResponse> logout(HttpServletRequest request, HttpServletResponse response) {
+        sessionService.logout(request, response);
+
+        return ResponseEntity.status(HttpStatus.OK).body(new SuccessResponse(true));
     }
 }

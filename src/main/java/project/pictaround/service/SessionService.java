@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import project.pictaround.config.SessionConst;
 import project.pictaround.domain.Member;
 import project.pictaround.domain.Session;
 import project.pictaround.repository.MemberRepository;
@@ -20,7 +21,7 @@ import java.util.UUID;
 @Service
 public class SessionService {
 
-    public static final String SESSION_COOKIE_NAME = "USER_SESSION";
+    public static final String SESSION_COOKIE_NAME = SessionConst.USER_SESSION;
     public static final int SESSION_MAX_SECONDS = 6 * 60 * 60;
     public static final int REFRESH_SECONDS = 3 * 60 * 60;
 
@@ -39,23 +40,25 @@ public class SessionService {
         // 세션 id 생성
         String sessionValue = UUID.randomUUID().toString().replaceAll("-", "");
 
-        // 기존에 있다면 삭제 처리
-        List<Session> sessions = sessionRepository.findByUserId(member.getId());
-
-        for (Session session : sessions) {
-            sessionRepository.deleteBySessionValue(session.getSessionValue());
-        }
-
         Session sessionEntity = sessionBuilder(member, sessionValue);
 
+        log.info("member.getId() = {}", member.getId());
+        log.info("sessionEntity = {}", sessionValue);
         // 세션 id 저장
         sessionRepository.save(sessionEntity);
 
         // 쿠키 생성
-        Cookie mySessionCookie = new Cookie(SESSION_COOKIE_NAME, sessionValue);
-        mySessionCookie.setMaxAge(SESSION_MAX_SECONDS);
-        mySessionCookie.setPath("/");
-        response.addCookie(mySessionCookie);
+        setCookie(response, SESSION_COOKIE_NAME, sessionValue, SESSION_MAX_SECONDS);
+    }
+
+    @Transactional
+    protected void updateSession(Session session, HttpServletResponse response) {
+        LocalDateTime expiredAt = LocalDateTime.now().plusSeconds(SESSION_MAX_SECONDS);
+        String sessionValue = UUID.randomUUID().toString().replaceAll("-", "");
+
+        System.out.println(session.getId() + " " + sessionValue + " " + expiredAt);
+        sessionRepository.updateSessionBy(expiredAt, sessionValue, session.getId());
+        setCookie(response, SESSION_COOKIE_NAME, sessionValue, SESSION_MAX_SECONDS);
     }
 
     // member 찾기
@@ -63,15 +66,9 @@ public class SessionService {
     public Member findMember(HttpServletRequest request, HttpServletResponse response, boolean needRefresh) {
         Cookie sessionCookie = findCookie(request);
 
-        log.info("sessionCookie = {}", sessionCookie);
-
         if (sessionCookie == null) return null;
 
-        log.info("sessionCookie.getValue() = {}", sessionCookie.getValue());
-
         Session session = sessionRepository.findBySessionValue(sessionCookie.getValue());
-
-        log.info("session = {}", session);
 
         if (session == null) return null;
 
@@ -82,15 +79,14 @@ public class SessionService {
         Member member = memberRepository.findById(session.getUserId()).orElse(null);
 
         // 세션 연장
-        if (needRefresh && member != null && session.getExpiresAt().isAfter(now.minusSeconds(REFRESH_SECONDS))) {
-            sessionRepository.deleteBySessionValue(session.getSessionValue());
-            createSession(member, response);
+        if (needRefresh && member != null && now.isAfter(session.getExpiresAt().minusSeconds(REFRESH_SECONDS))) {
+            updateSession(session, response);
         }
 
         return member;
     }
-
     // 세션 찾기
+
     private Cookie findCookie(HttpServletRequest request) {
         if (request.getCookies() == null) return null;
 
@@ -99,7 +95,6 @@ public class SessionService {
                 .findAny()
                 .orElse(null);
     }
-
 
     private static Session sessionBuilder(Member member, String sessionValue) {
         LocalDateTime now = LocalDateTime.now();
@@ -111,5 +106,23 @@ public class SessionService {
                 .expiresAt(now.plusSeconds(SESSION_MAX_SECONDS)).build();
     }
 
+    @Transactional
+    public void logout(HttpServletRequest request, HttpServletResponse response) {
+        Cookie sessionCookie = findCookie(request);
 
+        if (sessionCookie != null) {
+            sessionRepository.deleteBySessionValue(sessionCookie.getValue());
+        }
+
+        setCookie(response, SESSION_COOKIE_NAME, null, 0);
+    }
+
+    private void setCookie(HttpServletResponse response, String cookieName, String cookieValue, int maxAge) {
+        Cookie mySessionCookie = new Cookie(cookieName, cookieValue);
+        mySessionCookie.setMaxAge(maxAge);
+        mySessionCookie.setPath("/");
+        mySessionCookie.setSecure(true);
+        mySessionCookie.setAttribute("SameSite", "None");
+        response.addCookie(mySessionCookie);
+    }
 }

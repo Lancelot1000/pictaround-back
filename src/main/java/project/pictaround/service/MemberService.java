@@ -5,16 +5,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import project.pictaround.domain.Favorite;
 import project.pictaround.domain.Member;
 import project.pictaround.dto.response.FindMeResponseDto;
-import project.pictaround.dto.response.MyFavoriteDto;
 import project.pictaround.exception.UnauthorizedException;
-import project.pictaround.repository.FavoriteRepository;
 import project.pictaround.repository.MemberRepository;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -24,13 +18,16 @@ public class MemberService {
     MemberRepository memberRepository;
     SessionService sessionService;
 
-    public FindMeResponseDto findMe(HttpServletRequest request, HttpServletResponse response) {
-        Member member = sessionService.findMember(request, response, false);
+    @Transactional
+    public FindMeResponseDto findMe(HttpServletRequest request, HttpServletResponse response, boolean refresh) {
+        Member member = sessionService.findMember(request, response, refresh);
 
         if (member == null) {
+            sessionService.logout(request, response);
             throw new UnauthorizedException("EXPIRED TOKEN");
         }
 
         return FindMeResponseDto.of(member);
     }
+
 }

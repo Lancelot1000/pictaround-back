@@ -9,7 +9,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOriginPatterns("*")
+                .allowedOriginPatterns("https://pictaround.vercel.app")
                 .allowedMethods("GET", "POST", "HEAD")
                 .allowCredentials(true);
     }
